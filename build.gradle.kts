@@ -4,65 +4,74 @@ import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
-    id("java")
-    alias(libs.plugins.kotlin)
+    id("build.common.lifecycle")
+    id("build.common.kotlin-conventions")
     alias(libs.plugins.intelliJPlatform)
     alias(libs.plugins.changelog)
     alias(libs.plugins.releasePlugin)
 }
 
 group = "io.github.simonhauck"
+
 version = Version.fromPropertiesFile(file("version.properties"))
 
-kotlin {
-    jvmToolchain(21)
-}
+kotlin { jvmToolchain(21) }
 
 repositories {
     mavenCentral()
 
-    // IntelliJ Platform Gradle Plugin Repositories Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-repositories-extension.html
-    intellijPlatform {
-        defaultRepositories()
-    }
+    // IntelliJ Platform Gradle Plugin Repositories Extension - read more:
+    // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-repositories-extension.html
+    intellijPlatform { defaultRepositories() }
 }
 
 dependencies {
     testImplementation(libs.junit)
 
     intellijPlatform {
-        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+        create(
+            providers.gradleProperty("platformType"),
+            providers.gradleProperty("platformVersion"),
+        )
 
-        // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
+        // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties
+        // file for bundled IntelliJ Platform plugins.
         bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
 
-        // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
+        // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for
+        // plugin from JetBrains Marketplace.
         plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
 
-        instrumentationTools()
         pluginVerifier()
         zipSigner()
         testFramework(TestFrameworkType.Platform)
     }
 }
 
-// Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
+// Configure IntelliJ Platform Gradle Plugin - read more:
+// https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
 intellijPlatform {
     pluginConfiguration {
         version = Version.fromPropertiesFile(file("version.properties"))
 
-        // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
-        description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
-            val start = "<!-- Plugin description -->"
-            val end = "<!-- Plugin description end -->"
+        // Extract the <!-- Plugin description --> section from README.md and provide for the
+        // plugin's manifest
+        description =
+            providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
+                val start = "<!-- Plugin description -->"
+                val end = "<!-- Plugin description end -->"
 
-            with(it.lines()) {
-                if (!containsAll(listOf(start, end))) {
-                    throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
+                with(it.lines()) {
+                    if (!containsAll(listOf(start, end))) {
+                        throw GradleException(
+                            "Plugin description section not found in README.md:\n$start ... $end"
+                        )
+                    }
+                    subList(indexOf(start) + 1, indexOf(end))
+                        .joinToString("\n")
+                        .let(::markdownToHTML)
                 }
-                subList(indexOf(start) + 1, indexOf(end)).joinToString("\n").let(::markdownToHTML)
             }
-        }
 
         val changelog = project.changelog // local variable for configuration cache compatibility
         // Get the latest available change notes from the changelog file
@@ -75,8 +84,7 @@ intellijPlatform {
                         .withEmptySections(false),
                     Changelog.OutputType.HTML,
                 )
-
-        }
+            }
 
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
@@ -92,29 +100,42 @@ intellijPlatform {
 
     publishing {
         token = providers.environmentVariable("PUBLISH_TOKEN")
-        // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
-        // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
+        // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release
+        // labels, like 2.1.7-alpha.3
+        // Specify pre-release label to publish the plugin in a custom Release Channel
+        // automatically. Read more:
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-        channels = providers.gradleProperty("pluginVersion").map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
+        channels =
+            providers.gradleProperty("pluginVersion").map {
+                listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
+            }
     }
 
-    pluginVerification {
-        ides {
-            recommended()
-        }
-    }
+    pluginVerification { ides { recommended() } }
 }
 
-// Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
+// Configure Gradle Changelog Plugin - read more:
+// https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
     groups.empty()
     repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
 }
 
 tasks {
-    publishPlugin {
-        dependsOn(patchChangelog)
-    }
+    publishPlugin { dependsOn(patchChangelog) }
+
+    val checkJvmArgsCompatibilityTask =
+        register<Build_common_lifecycle_gradle.CheckJvmArgsCompatibilityTask>(
+            "checkJvmArgsCompatibility"
+        ) {
+            gradlePropertiesFiles =
+                listOf(
+                    layout.projectDirectory.file("gradle.properties").asFile,
+                    layout.projectDirectory.file("build-logic/gradle.properties").asFile,
+                )
+        }
+
+    check { dependsOn(checkJvmArgsCompatibilityTask) }
 }
 
 intellijPlatformTesting {
@@ -131,9 +152,7 @@ intellijPlatformTesting {
                 }
             }
 
-            plugins {
-                robotServerPlugin()
-            }
+            plugins { robotServerPlugin() }
         }
     }
 }
