@@ -15,7 +15,6 @@ group = "io.github.simonhauck"
 
 version = Version.fromPropertiesFile(file("version.properties"))
 
-kotlin { jvmToolchain(21) }
 
 repositories {
     mavenCentral()
@@ -117,8 +116,8 @@ intellijPlatform {
 // Configure Gradle Changelog Plugin - read more:
 // https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
-    groups.empty()
-    repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+    groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"))
+    repositoryUrl = "https://github.com/simonhauck/act-intellij-plugin"
 }
 
 tasks {
