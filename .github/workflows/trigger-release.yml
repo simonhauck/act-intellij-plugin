@@ -1,0 +1,54 @@
+name: Trigger Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: 'The type of release that should be performed'
+        type: choice
+        required: true
+        default: 'patch'
+        options:
+          - major
+          - minor
+          - patch
+
+
+jobs:
+  tests:
+    uses: ./.github/workflows/run-tests.yml
+
+  trigger-release:
+    if: contains('["simonhauck"]', github.actor)
+    runs-on: ubuntu-latest
+    name: Trigger the release
+    needs:
+      - tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          key: |
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
+            ${{ runner.os }}-build-main
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./**/.gradle
+            ./**/build
+
+      - name: Run gradle release task
+        run: ./gradlew release -x :example:release -PenablePush=true -PreleaseType=${{ github.event.inputs.release-type }} --no-daemon

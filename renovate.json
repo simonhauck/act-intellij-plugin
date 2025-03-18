@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":automergeAll"
+  ],
+  "labels": [
+    "dependencies"
+  ]
+}

@@ -1,0 +1,45 @@
+name: run-tests
+
+on: workflow_call
+
+jobs:
+  tests:
+    name: Run Tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Gradle Wrapper Validation
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          key: |
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ github.head_ref || github.ref_name }}
+            ${{ runner.os }}-build-main
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./**/.gradle
+            ./**/build
+
+      - name: Run Build & Test
+        run: ./gradlew build --no-daemon
+
+      # Run Verify Plugin task and IntelliJ Plugin Verifier tool
+      - name: Run Plugin Verification tasks
+        run: ./gradlew verifyPlugin
