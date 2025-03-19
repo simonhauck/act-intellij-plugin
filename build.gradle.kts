@@ -15,7 +15,6 @@ group = "io.github.simonhauck"
 
 version = Version.fromPropertiesFile(file("version.properties"))
 
-
 repositories {
     mavenCentral()
 
@@ -51,8 +50,6 @@ dependencies {
 // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
 intellijPlatform {
     pluginConfiguration {
-        version = Version.fromPropertiesFile(file("version.properties"))
-
         // Extract the <!-- Plugin description --> section from README.md and provide for the
         // plugin's manifest
         description =
@@ -72,7 +69,8 @@ intellijPlatform {
                 }
             }
 
-        val changelog = project.changelog // local variable for configuration cache compatibility
+        //        val changelog = project.changelog // local variable for configuration cache
+        // compatibility
         // Get the latest available change notes from the changelog file
         changeNotes =
             with(changelog) {
@@ -99,43 +97,32 @@ intellijPlatform {
 
     publishing {
         token = providers.environmentVariable("PUBLISH_TOKEN")
-        // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release
-        // labels, like 2.1.7-alpha.3
-        // Specify pre-release label to publish the plugin in a custom Release Channel
-        // automatically. Read more:
-        // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
+        val currentVersion = Version.fromPropertiesFile(file("version.properties"))
         channels =
-            providers.gradleProperty("pluginVersion").map {
-                listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
-            }
+            listOf(
+                currentVersion.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }
+            )
     }
 
     pluginVerification { ides { recommended() } }
 }
 
-// Configure Gradle Changelog Plugin - read more:
-// https://github.com/JetBrains/gradle-changelog-plugin
-changelog {
-    groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"))
-    repositoryUrl = "https://github.com/simonhauck/act-intellij-plugin"
-}
+// ---------------------------------------------------------------------------------------------------------------------
+// Testing
+// ---------------------------------------------------------------------------------------------------------------------
 
-tasks {
-    publishPlugin { dependsOn(patchChangelog) }
+val checkJvmArgsCompatibilityTask =
+    tasks.register<Build_common_lifecycle_gradle.CheckJvmArgsCompatibilityTask>(
+        "checkJvmArgsCompatibility"
+    ) {
+        gradlePropertiesFiles =
+            listOf(
+                layout.projectDirectory.file("gradle.properties").asFile,
+                layout.projectDirectory.file("build-logic/gradle.properties").asFile,
+            )
+    }
 
-    val checkJvmArgsCompatibilityTask =
-        register<Build_common_lifecycle_gradle.CheckJvmArgsCompatibilityTask>(
-            "checkJvmArgsCompatibility"
-        ) {
-            gradlePropertiesFiles =
-                listOf(
-                    layout.projectDirectory.file("gradle.properties").asFile,
-                    layout.projectDirectory.file("build-logic/gradle.properties").asFile,
-                )
-        }
-
-    check { dependsOn(checkJvmArgsCompatibilityTask) }
-}
+tasks.check { dependsOn(checkJvmArgsCompatibilityTask) }
 
 intellijPlatformTesting {
     runIde {
@@ -155,3 +142,32 @@ intellijPlatformTesting {
         }
     }
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Configure release process
+// ---------------------------------------------------------------------------------------------------------------------
+
+// Configure Gradle Changelog Plugin - read more:
+// https://github.com/JetBrains/gradle-changelog-plugin
+changelog {
+    groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"))
+    repositoryUrl = "https://github.com/simonhauck/act-intellij-plugin"
+}
+
+release {
+    disablePush = true
+    releaseCommitAddFiles.set(listOf(file("version.properties"), file("CHANGELOG.md")))
+    checkForUncommittedFiles = false
+}
+
+tasks.writeReleaseVersion {
+    doLast {
+        val newVersion = Version.fromPropertiesFile(file("version.properties"))
+        project.version = newVersion
+    }
+    notCompatibleWithConfigurationCache("Project version is right now set manually")
+}
+
+tasks.patchChangelog { dependsOn(tasks.writeReleaseVersion) }
+
+tasks.commitReleaseVersion { dependsOn(tasks.patchChangelog) }
