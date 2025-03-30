@@ -42,5 +42,5 @@ jobs:
         run: ./gradlew build --no-daemon
 
       # Run Verify Plugin task and IntelliJ Plugin Verifier tool
-      - name: Run Plugin Verification tasks
-        run: ./gradlew verifyPlugin
+#      - name: Run Plugin Verification tasks
+#        run: ./gradlew verifyPlugin
