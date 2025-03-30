@@ -1,6 +1,6 @@
 [versions]
 # libraries
-junit = "4.13.2"
+junitVersion = "5.12.1"
 
 # plugins
 changelog = "2.2.1"
@@ -13,10 +13,18 @@ kotlinPlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.r
 ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.22.0" }
 testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version = "4.0.0" }
 
-junit = { group = "junit", name = "junit", version.ref = "junit" }
+junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }
+junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitVersion" }
+# https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#junit5-test-framework-refers-to-junit4
+junitRuntime = { module = "junit:junit", version="4.13.2" }
+junitPlatforLauncher = { module = "org.junit.platform:junit-platform-launcher" }
+assertJCore = { module = "org.assertj:assertj-core", version = "3.27.3" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
 intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinVersion" }
 releasePlugin = { id = "io.github.simonhauck.release", version = "1.4.0" }
+
+[bundles]
+junit = ["junitApi", "junitEngine", "assertJCore"]

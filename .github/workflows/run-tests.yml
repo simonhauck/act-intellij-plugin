@@ -36,6 +36,7 @@ jobs:
             ~/.gradle/wrapper
             ./**/.gradle
             ./**/build
+            ~/.pluginVerifier
 
       - name: Run Build & Test
         run: ./gradlew build --no-daemon

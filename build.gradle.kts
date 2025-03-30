@@ -24,7 +24,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.junit)
+    testRuntimeOnly(libs.junitRuntime)
+    testRuntimeOnly(libs.junitPlatforLauncher)
 
     intellijPlatform {
         create(
