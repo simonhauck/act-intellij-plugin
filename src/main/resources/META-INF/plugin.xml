@@ -9,10 +9,19 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.simonhauck.actintellijplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <toolWindow factoryClass="com.github.simonhauck.actintellijplugin.toolWindow.MyToolWindowFactory"
+                    id="MyToolWindow"/>
+
+        <configurationType
+                implementation="com.github.simonhauck.actintellijplugin.runconfiguration.GithubWorkflowRunConfigurationType"/>
+
+        <codeInsight.lineMarkerProvider
+                language="yaml"
+                implementationClass="com.github.simonhauck.actintellijplugin.runconfiguration.GithubWorkflowGutterIconProvider"/>
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.simonhauck.actintellijplugin.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+        <listener class="com.github.simonhauck.actintellijplugin.listeners.MyApplicationActivationListener"
+                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
 </idea-plugin>
