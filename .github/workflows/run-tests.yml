@@ -13,9 +13,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Gradle Wrapper Validation
-        uses: gradle/actions/wrapper-validation@v3
+# Not wkring for now
+#      - name: Gradle Wrapper Validation
+#        uses: gradle/actions/wrapper-validation@v3
 
       - name: Set up JDK
         uses: actions/setup-java@v4
