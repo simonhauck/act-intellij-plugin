@@ -5,12 +5,9 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.editor.markup.GutterIconRenderer
-import com.intellij.openapi.project.projectsDataDir
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.util.FunctionUtil
-import org.jetbrains.yaml.psi.impl.YAMLKeyValueImpl
 
 class GithubWorkflowGutterIconProvider : LineMarkerProvider {
 
@@ -23,12 +20,9 @@ class GithubWorkflowGutterIconProvider : LineMarkerProvider {
 
         if (element !is LeafPsiElement) return null
 
-
-        if(element.text.contains("push")){
+        if (element.text.contains("push")) {
             println("Push element detected")
         }
-
-
 
         if (file.name.endsWith(".yml") || file.name.endsWith(".yaml")) {
             return LineMarkerInfo(
@@ -41,7 +35,8 @@ class GithubWorkflowGutterIconProvider : LineMarkerProvider {
                     println("Action")
                 },
                 GutterIconRenderer.Alignment.CENTER,
-                { "Accessible name provider" })
+                { "Accessible name provider" },
+            )
         }
         return null
     }

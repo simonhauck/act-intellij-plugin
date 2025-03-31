@@ -25,12 +25,13 @@ import com.intellij.util.ui.FormBuilder
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class GithubWorkflowRunConfigurationType : ConfigurationTypeBase(
-    "simonhauck.act-intellij-plugin.run-workflow",
-    "GitHub Workflow Run Configuration",
-    "Run configuration for GitHub workflow files",
-    AllIcons.FileTypes.Yaml
-) {
+class GithubWorkflowRunConfigurationType :
+    ConfigurationTypeBase(
+        "simonhauck.act-intellij-plugin.run-workflow",
+        "GitHub Workflow Run Configuration",
+        "Run configuration for GitHub workflow files",
+        AllIcons.FileTypes.Yaml,
+    ) {
 
     init {
         addFactory(GithubWorkflowRunConfigurationFactory(this))
@@ -53,19 +54,16 @@ class GithubWorkflowRunConfigurationFactory(type: ConfigurationType) : Configura
 
 class DemoRunConfigurationOptions : RunConfigurationOptions() {
 
-    private val _myScriptName: StoredProperty<String?> = string("").provideDelegate(
-        this, "scriptName"
-    )
+    private val _myScriptName: StoredProperty<String?> =
+        string("").provideDelegate(this, "scriptName")
 
     public var myScriptName: String
         get() = _myScriptName.getValue(this) ?: ""
         set(value) = _myScriptName.setValue(this, value)
-
 }
 
-class DemoRunConfiguration(
-    project: Project, factory: ConfigurationFactory, name: String
-) : RunConfigurationBase<DemoRunConfigurationOptions>(project, factory, name) {
+class DemoRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
+    RunConfigurationBase<DemoRunConfigurationOptions>(project, factory, name) {
 
     override fun getOptions(): DemoRunConfigurationOptions {
         return super.getOptions() as DemoRunConfigurationOptions
@@ -79,10 +77,11 @@ class DemoRunConfiguration(
         options.myScriptName = scriptName
     }
 
-    override fun getState(executor: Executor, executionEnvironment: ExecutionEnvironment): RunProfileState {
-        return MyCommandLineSate(
-            executionEnvironment, options,
-        )
+    override fun getState(
+        executor: Executor,
+        executionEnvironment: ExecutionEnvironment,
+    ): RunProfileState {
+        return MyCommandLineSate(executionEnvironment, options)
     }
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
@@ -90,16 +89,19 @@ class DemoRunConfiguration(
     }
 }
 
-class MyCommandLineSate(environment: ExecutionEnvironment, private val options: DemoRunConfigurationOptions) :
-    CommandLineState(environment) {
+class MyCommandLineSate(
+    environment: ExecutionEnvironment,
+    private val options: DemoRunConfigurationOptions,
+) : CommandLineState(environment) {
 
     override fun startProcess(): ProcessHandler {
-        val commandLine: GeneralCommandLine = GeneralCommandLine("cmd.exe", "/c", "echo", options.myScriptName)
-        val processHandler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine)
+        val commandLine: GeneralCommandLine =
+            GeneralCommandLine("cmd.exe", "/c", "echo", options.myScriptName)
+        val processHandler =
+            ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine)
         ProcessTerminatedListener.attach(processHandler)
         return processHandler
     }
-
 }
 
 class DemoSettingsEditor : SettingsEditor<DemoRunConfiguration>() {
@@ -109,9 +111,15 @@ class DemoSettingsEditor : SettingsEditor<DemoRunConfiguration>() {
 
     init {
         scriptPathField.addBrowseFolderListener(
-            "Select Script File", null, null, FileChooserDescriptorFactory.createSingleFileDescriptor()
+            "Select Script File",
+            null,
+            null,
+            FileChooserDescriptorFactory.createSingleFileDescriptor(),
         )
-        myPanel = FormBuilder.createFormBuilder().addLabeledComponent("Script file", scriptPathField).panel
+        myPanel =
+            FormBuilder.createFormBuilder()
+                .addLabeledComponent("Script file", scriptPathField)
+                .panel
     }
 
     override fun resetEditorFrom(demoRunConfiguration: DemoRunConfiguration) {
