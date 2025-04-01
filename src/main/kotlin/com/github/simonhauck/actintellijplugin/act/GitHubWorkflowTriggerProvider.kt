@@ -5,4 +5,5 @@ class GitHubWorkflowTriggerProvider {
     fun getSupportedTriggers(): List<String> {
         return listOf("push", "pull_request")
     }
+
 }

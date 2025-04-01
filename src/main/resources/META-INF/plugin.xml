@@ -5,6 +5,7 @@
     <vendor>simonhauck</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
@@ -13,11 +14,11 @@
                     id="MyToolWindow"/>
 
         <configurationType
-                implementation="com.github.simonhauck.actintellijplugin.runconfiguration.GithubWorkflowRunConfigurationType"/>
+                implementation="com.github.simonhauck.actintellijplugin.ui.runconfiguration.GithubWorkflowRunConfigurationType"/>
 
         <codeInsight.lineMarkerProvider
                 language="yaml"
-                implementationClass="com.github.simonhauck.actintellijplugin.runconfiguration.GithubWorkflowGutterIconProvider"/>
+                implementationClass="com.github.simonhauck.actintellijplugin.ui.guttericon.GithubWorkflowGutterIconProvider"/>
     </extensions>
 
     <applicationListeners>
