@@ -5,14 +5,25 @@
     <vendor>simonhauck</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.simonhauck.actintellijplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <toolWindow factoryClass="com.github.simonhauck.actintellijplugin.toolWindow.MyToolWindowFactory"
+                    id="MyToolWindow"/>
+
+
+        <configurationType
+                implementation="com.github.simonhauck.actintellijplugin.runconfiguration.GitHubActConfigurationType"/>
+
+        <runLineMarkerContributor
+                language="yaml"
+                implementationClass="com.github.simonhauck.actintellijplugin.runconfiguration.GithubActGutterIcon"/>
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.simonhauck.actintellijplugin.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+        <listener class="com.github.simonhauck.actintellijplugin.listeners.MyApplicationActivationListener"
+                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
 </idea-plugin>

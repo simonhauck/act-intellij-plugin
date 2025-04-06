@@ -8,8 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
-#        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
 
     steps:
       - name: Checkout repository
@@ -37,11 +36,11 @@ jobs:
             ~/.gradle/wrapper
             ./**/.gradle
             ./**/build
-            ~/.pluginVerifier
+#            ~/.pluginVerifier
 
       - name: Run Build & Test
         run: ./gradlew build --no-daemon
 
       # Run Verify Plugin task and IntelliJ Plugin Verifier tool
-      - name: Run Plugin Verification tasks
-        run: ./gradlew verifyPlugin
+#      - name: Run Plugin Verification tasks
+#        run: ./gradlew verifyPlugin

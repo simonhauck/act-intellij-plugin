@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Unnamed" type="DemoRunConfiguration" factoryName="DemoRunConfiguration">
+    <option name="scriptName" value="$PROJECT_DIR$/version.properties" />
+    <method v="2" />
+  </configuration>
+</component>
