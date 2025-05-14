@@ -4,7 +4,7 @@ junitVersion = "5.12.2"
 
 # plugins
 changelog = "2.2.1"
-intelliJPlatform = "2.5.0"
+intelliJPlatform = "2.6.0"
 kotlinVersion = "2.1.21"
 
 [libraries]
