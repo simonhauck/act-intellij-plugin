@@ -10,7 +10,7 @@ kotlinVersion = "2.1.21"
 [libraries]
 # Plugins that are used in buildLogic
 kotlinPlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinVersion" }
-ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.22.0" }
+ktfmtPlugin = { module = "com.ncorti.ktfmt.gradle:plugin", version = "0.23.0" }
 testLoggerPlugin = { module = "com.adarshr:gradle-test-logger-plugin", version = "4.0.0" }
 
 junitApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitVersion" }
