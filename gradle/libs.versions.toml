@@ -1,6 +1,6 @@
 [versions]
 # libraries
-junitVersion = "5.13.3"
+junitVersion = "5.13.4"
 
 # plugins
 changelog = "2.2.1"
