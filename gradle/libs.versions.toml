@@ -3,7 +3,7 @@
 junitVersion = "5.13.4"
 
 # plugins
-changelog = "2.2.1"
+changelog = "2.3.0"
 intelliJPlatform = "2.7.0"
 kotlinVersion = "2.2.0"
 
