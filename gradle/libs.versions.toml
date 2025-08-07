@@ -18,7 +18,7 @@ junitEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref =
 # https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#junit5-test-framework-refers-to-junit4
 junitRuntime = { module = "junit:junit", version="4.13.2" }
 junitPlatforLauncher = { module = "org.junit.platform:junit-platform-launcher" }
-assertJCore = { module = "org.assertj:assertj-core", version = "3.27.3" }
+assertJCore = { module = "org.assertj:assertj-core", version = "3.27.4" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
