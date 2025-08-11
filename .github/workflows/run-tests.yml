@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 # Not wkring for now
 #      - name: Gradle Wrapper Validation
 #        uses: gradle/actions/wrapper-validation@v3
